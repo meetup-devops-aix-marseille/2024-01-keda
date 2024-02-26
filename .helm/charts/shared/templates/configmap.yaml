@@ -1,0 +1,8 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name }}
+data:
+  {{- range $key, $val := .Values.configmap }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}

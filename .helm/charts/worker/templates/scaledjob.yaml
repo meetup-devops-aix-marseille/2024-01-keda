@@ -1,0 +1,59 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  failedJobsHistoryLimit: 10
+  jobTargetRef:
+    backoffLimit: 1
+    activeDeadlineSeconds:  {{ .Values.keda.activeDeadlineSeconds }}
+    template:
+      metadata:
+        labels:
+          app: {{ .Chart.Name }}
+      spec:
+        initContainers:
+          - name: wait-redis
+            image: redis:7-alpine
+            envFrom:
+              - configMapRef:
+                  name: shared
+            command:
+            - sh
+            - -ec
+            - |
+              until (redis-cli -u $REDIS_URL ping); do
+                sleep 1
+              done
+        containers:
+          - name: {{ .Chart.Name }}
+            image: {{ .Values.werf.image.worker }}
+            envFrom:
+              - configMapRef:
+                  name: shared
+            resources:
+              {{- toYaml .Values.resources | nindent 14 }}
+        {{- with .Values.nodeSelector }}
+        nodeSelector:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        restartPolicy: Never
+        {{- with .Values.affinity }}
+        affinity:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.tolerations }}
+        tolerations:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+  maxReplicaCount: {{ .Values.keda.maxReplicas }}
+  pollingInterval: {{ .Values.keda.pollingInterval }}
+  rollout:
+    strategy: gradual
+  successfulJobsHistoryLimit: 1
+  triggers:
+    - type: redis
+      metadata:
+        address: {{ .Values.keda.redis.address }}
+        listName: {{ .Values.keda.redis.listName }}
+        listLength: "1"

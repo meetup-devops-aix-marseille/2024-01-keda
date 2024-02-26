@@ -1,0 +1,33 @@
+configVersion: 1
+project: meetup-keda
+deploy:
+  helmRelease: meetup-keda
+cleanup:
+  keepPolicies:
+  - references:
+      tag: /.*/
+      limit:
+        last: 10
+  - references:
+      branch: /.*/
+      limit:
+        last: 10
+        in: 168h
+        operator: And
+    imagesPerReference:
+      last: 2
+      in: 168h
+      operator: And
+  - references:
+      branch: /^(main|staging|production)$/
+    imagesPerReference:
+      last: 10
+---
+image: api
+dockerfile: ./src/api/Dockerfile
+---
+image: web
+dockerfile: ./src/web/Dockerfile
+---
+image: worker
+dockerfile: ./src/worker/Dockerfile

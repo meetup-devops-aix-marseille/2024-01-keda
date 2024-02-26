@@ -1,0 +1,21 @@
+dependencies:
+  - name: web
+    version: "1.0.0"
+    export-values: &export-values
+      - parent: werf
+        child: werf
+  - name: api
+    version: "1.0.0"
+    export-values: *export-values
+  - name: worker
+    version: "1.0.0"
+    tags:
+      - celery-worker
+      - cpu
+    export-values: *export-values
+  - name: shared
+    version: "1.0.0"
+    tags:
+      - configmap
+      - shared
+    export-values: *export-values

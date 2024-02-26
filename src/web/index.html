@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis List Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #title {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #ffffff;
+            border-bottom: 1px solid #ccc;
+        }
+        #canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+    <h1>Redis List Visualization</h1>
+    <div id="canvas-container"></div>
+
+    <script>
+        // Get the number of elements from the server-side rendering
+        var count = {{.Count}};
+
+        // Function to draw stars based on count
+        function setup() {
+            // Create canvas
+            var canvas = createCanvas(800, 800);
+            canvas.parent('canvas-container');
+
+            background(0);
+        }
+
+        // Function to draw stars based on count
+        function drawStars(count) {
+            // Clear canvas
+            background(0);
+
+            // Draw stars based on count (simplified for demonstration)
+            // Calculate number of rows and columns
+            var rows = Math.ceil(Math.sqrt(count));
+            var cols = Math.ceil(count / rows);
+
+            // Calculate star size and spacing
+            var starSize = 20;
+            var padding = 30;
+
+            // Draw stars
+            var index = 0;
+            for (var i = 0; i < rows; i++) {
+                for (var j = 0; j < cols; j++) {
+                    if (index < count) {
+                        var x = (j * (starSize + padding)) + padding;
+                        var y = (i * (starSize + padding)) + padding;
+                        fill(255);
+                        ellipse(x, y, starSize, starSize);
+                        index++;
+                    }
+                }
+            }
+        }
+
+        // Function to fetch count from server and update stars
+        function refreshStars() {
+            // Fetch count from server
+            fetch('/getCount')
+                .then(response => response.json())
+                .then(data => {
+                    var count = data.count;
+                    drawStars(count); // Update stars with new count
+                })
+                .catch(error => console.error('Error fetching count:', error));
+        }
+
+        // Call refreshStars function periodically
+        setInterval(refreshStars, 500); // Refresh every 0.5 seconds
+        // Initial page setup
+        refreshPage(); // Call once initially to render page with initial data
+    </script>
+</body>
+</html>

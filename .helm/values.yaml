@@ -1,0 +1,48 @@
+web:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      # cpu: 50m
+      memory: 256Mi
+  port: 8081
+
+api:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      # cpu: 50m
+      memory: 256Mi
+  port: 8080
+
+worker:
+  keda:
+    maxReplicas: 100
+    pollingInterval: 10
+    activeDeadlineSeconds: 30
+    redis:
+      address: keydb.keydb:6379
+      listName: meetup
+  resources:
+    requests:
+      cpu: 100m
+      memory: 10Mi
+    limits:
+      # cpu: 500m
+      memory: 20Mi
+  tolerations:
+    - key: "worker"
+      operator: "Equal"
+      effect: "NoSchedule"
+      value: "meetup"
+  nodeSelector:
+    worker: meetup
+
+shared:
+  configmap:
+    REDIS_HOST: keydb.keydb
+    REDIS_URL: redis://keydb.keydb:6379/0
+    REDIS_LIST_NAME: meetup

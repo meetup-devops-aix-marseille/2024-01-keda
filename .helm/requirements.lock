@@ -1,0 +1,15 @@
+dependencies:
+- name: web
+  repository: ""
+  version: 1.0.0
+- name: api
+  repository: ""
+  version: 1.0.0
+- name: worker
+  repository: ""
+  version: 1.0.0
+- name: shared
+  repository: ""
+  version: 1.0.0
+digest: sha256:079e92fb250ccdc6d18179cb99bad2092ab7f61cd70d4d366256376726b1189f
+generated: "2024-02-26T22:24:03.761098767+01:00"

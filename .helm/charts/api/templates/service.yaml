@@ -1,0 +1,12 @@
+{{ if .Values.port }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  selector:
+    app: {{ .Chart.Name }}
+  ports:
+  - name: http
+    port: {{ .Values.port }}
+{{ end }}
