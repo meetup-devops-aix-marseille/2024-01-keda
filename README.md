@@ -19,13 +19,9 @@ helm upgrade -i --create-namespace --namespace keydb --repo https://enapter.gith
 
 ```bash
 export WERF_BUILDAH_MODE=auto
-werf build --repo  europe-west1-docker.pkg.dev/meetup-devops/images/meetup-keda --dev
 werf helm dependency update .helm
-werf converge --repo  europe-west1-docker.pkg.dev/meetup-devops/images/meetup-keda --dev
+werf converge --repo  europe-west1-docker.pkg.dev/meetup-devops/images/meetup-keda
 ```
-
-k port-forward -n meetup-keda svc/api 8080:8080 &
-k port-forward -n meetup-keda svc/api 8081:8081 &
 
 ## Add a star
 
